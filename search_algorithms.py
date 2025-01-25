@@ -97,7 +97,6 @@ def greedy_bfs(start, goal, obstacles, rows, cols):
     pass
 
 # A* Search Algorithm
-import heapq
 
 def astar(start, goal, obstacles, rows, cols):
     """
