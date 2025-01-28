@@ -82,19 +82,163 @@ def bfs(start, goal, obstacles, rows, cols):
 
 # Depth First Search (DFS) Algorithm
 def dfs(start, goal, obstacles, rows, cols):
-    pass
+    """
+    DFS algorithm to find a path from start to goal.
+    Args:
+    - start: tuple (row, col), the starting position of the snake
+    - goal: tuple (row, col), the target position (food)
+    - obstacles: set of obstacle positions
+    - rows: number of rows in the grid
+    - cols: number of columns in the grid
 
-# Iterative Deepening Search (IDS Algorithm
+    Returns:
+    - A list of moves that represents the path from the start to the goal. 
+      If no path is found, returns an empty list.
+    """
+    stack = [(start, [])]
+    visited = set()
+
+    while stack:
+        current, path = stack.pop()
+
+        if current in visited:
+            continue
+
+        visited.add(current)
+
+        if current == goal:
+            return path
+
+        for direction in DIRECTIONS:
+            new_row = current[0] + direction[0]
+            new_col = current[1] + direction[1]
+            new_pos = (new_row, new_col)
+
+            if (
+                0 <= new_row < rows and
+                0 <= new_col < cols and
+                new_pos not in obstacles and
+                new_pos not in visited
+            ):
+                stack.append((new_pos, path + [direction]))
+
+    return []
+
+
+# Iterative Deepening Search (IDS) Algorithm
 def ids(start, goal, obstacles, rows, cols):
-    pass
+    """
+    IDS algorithm to find a path from start to goal.
+    """
+    def dls(current, goal, depth, path, visited):
+        if depth == 0:
+            return path if current == goal else None
+
+        if current in visited:
+            return None
+
+        visited.add(current)
+
+        for direction in DIRECTIONS:
+            new_row = current[0] + direction[0]
+            new_col = current[1] + direction[1]
+            new_pos = (new_row, new_col)
+
+            if (
+                0 <= new_row < rows and
+                0 <= new_col < cols and
+                new_pos not in obstacles
+            ):
+                result = dls(new_pos, goal, depth - 1, path + [direction], visited)
+                if result is not None:
+                    return result
+
+        return None
+
+    for depth in range(rows * cols):
+        visited = set()
+        result = dls(start, goal, depth, [], visited)
+        if result is not None:
+            return result
+
+    return []
+
 
 # Uniform Cost Search (UCS) Algorithm
 def ucs(start, goal, obstacles, rows, cols):
-    pass
+    """
+    UCS algorithm to find the shortest path from start to goal.
+    """
+    open_list = []
+    heapq.heappush(open_list, (0, start, []))
+    visited = set()
 
-# Greedy Best First Search Algorithm
+    while open_list:
+        cost, current, path = heapq.heappop(open_list)
+
+        if current in visited:
+            continue
+
+        visited.add(current)
+
+        if current == goal:
+            return path
+
+        for direction in DIRECTIONS:
+            new_row = current[0] + direction[0]
+            new_col = current[1] + direction[1]
+            new_pos = (new_row, new_col)
+
+            if (
+                0 <= new_row < rows and
+                0 <= new_col < cols and
+                new_pos not in obstacles and
+                new_pos not in visited
+            ):
+                heapq.heappush(open_list, (cost + 1, new_pos, path + [direction]))
+
+    return []
+
+
+# Greedy Best First Search (Greedy BFS) Algorithm
 def greedy_bfs(start, goal, obstacles, rows, cols):
-    pass
+    """
+    Greedy Best-First Search algorithm to find a path from start to goal.
+    """
+    open_list = []
+    heapq.heappush(open_list, (0, start, []))
+    visited = set()
+
+    def heuristic(pos, goal):
+        return abs(pos[0] - goal[0]) + abs(pos[1] - goal[1])
+
+    while open_list:
+        _, current, path = heapq.heappop(open_list)
+
+        if current in visited:
+            continue
+
+        visited.add(current)
+
+        if current == goal:
+            return path
+
+        for direction in DIRECTIONS:
+            new_row = current[0] + direction[0]
+            new_col = current[1] + direction[1]
+            new_pos = (new_row, new_col)
+
+            if (
+                0 <= new_row < rows and
+                0 <= new_col < cols and
+                new_pos not in obstacles and
+                new_pos not in visited
+            ):
+                h_cost = heuristic(new_pos, goal)
+                heapq.heappush(open_list, (h_cost, new_pos, path + [direction]))
+
+    return []
+
 
 # A* Search Algorithm
 
